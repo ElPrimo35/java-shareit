@@ -12,7 +12,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 @AllArgsConstructor
 @RequestMapping(path = "/users")
 public class UserController {
-    private final UserService userService;
+    private final UserService userService ;
 
     @PostMapping
     public UserDto createUser(@Valid @RequestBody UserDto userDto) {
