@@ -12,21 +12,21 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        return userMapper.ToDto(userStorage.createUser(userMapper.toUser(userDto)));
+        return userMapper.toDto(userStorage.createUser(userMapper.toUser(userDto)));
     }
 
     @Override
     public UserDto getUser(Integer userId) {
-        return userMapper.ToDto(userStorage.getUser(userId));
+        return userMapper.toDto(userStorage.getUser(userId));
     }
 
     @Override
     public UserDto updateUser(UserDto userDto, Integer userId) {
-        return userMapper.ToDto(userStorage.updateUser(userMapper.toUser(userDto), userId));
+        return userMapper.toDto(userStorage.updateUser(userMapper.toUser(userDto), userId));
     }
 
     @Override
     public UserDto deleteUser(Integer userId) {
-        return userMapper.ToDto(userStorage.deleteUser(userId));
+        return userMapper.toDto(userStorage.deleteUser(userId));
     }
 }
