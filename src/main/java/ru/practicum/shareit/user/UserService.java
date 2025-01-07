@@ -9,5 +9,5 @@ public interface UserService {
 
     UserDto updateUser(UserDto userDto, Integer userId);
 
-    UserDto deleteUser(Integer userId);
+    void deleteUser(Integer userId);
 }

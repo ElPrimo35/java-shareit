@@ -5,9 +5,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "/users")
@@ -25,12 +22,12 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public UserDto updateUser(@Valid @RequestBody UserDto userDto, @PathVariable Integer userId) {
+    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable Integer userId) {
         return userService.updateUser(userDto, userId);
     }
 
     @DeleteMapping("/{userId}")
-    public UserDto deleteUser(@PathVariable Integer userId) {
-        return userService.deleteUser(userId);
+    public void deleteUser(@PathVariable Integer userId) {
+        userService.deleteUser(userId);
     }
 }

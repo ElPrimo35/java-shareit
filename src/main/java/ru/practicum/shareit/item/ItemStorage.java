@@ -10,7 +10,7 @@ public interface ItemStorage {
 
     Item updateItem(ItemDto itemDto, Integer itemId, Integer userId);
 
-    Item getItem(Integer itemId, Integer userId);
+    Item getItem(Integer itemId);
 
     List<Item> getAllItems(Integer userId);
 

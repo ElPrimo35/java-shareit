@@ -2,9 +2,10 @@ package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.RequestException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,27 +15,34 @@ import java.util.List;
 public class ItemServiceImp implements ItemService {
     private final ItemStorage itemStorage;
     private final ItemMapper itemMapper;
+    private final UserStorage userStorage;
 
     @Override
     public ItemDto createItem(ItemDto itemDto, Integer userId) {
-        if (itemDto.getName().isEmpty() || itemDto.getDescription().isEmpty() || itemDto.getAvailable() == null) {
-            throw new RequestException("Bad request");
-        }
         return itemMapper.toDto(itemStorage.createItem(itemDto, userId));
     }
 
     @Override
     public ItemDto updateItem(ItemDto itemDto, Integer itemId, Integer userId) {
+        if (itemStorage.getItem(itemId) == null) {
+            throw new NotFoundException("Item not found");
+        }
         return itemMapper.toDto(itemStorage.updateItem(itemDto, itemId, userId));
     }
 
     @Override
     public ItemDto getItem(Integer itemId, Integer userId) {
-        return itemMapper.toDto(itemStorage.getItem(itemId, userId));
+        if (userStorage.getUser(userId) == null) {
+            throw new NotFoundException("User not found");
+        }
+        return itemMapper.toDto(itemStorage.getItem(itemId));
     }
 
     @Override
     public List<ItemDto> getAllItems(Integer userId) {
+        if (userStorage.getUser(userId) == null) {
+            throw new NotFoundException("User not found");
+        }
         List<ItemDto> itemDtos = new ArrayList<>();
         for (Item item : itemStorage.getAllItems(userId)) {
             itemDtos.add(itemMapper.toDto(item));

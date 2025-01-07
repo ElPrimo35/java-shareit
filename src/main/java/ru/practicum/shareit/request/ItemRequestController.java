@@ -3,9 +3,6 @@ package ru.practicum.shareit.request;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @RestController
 @RequestMapping(path = "/requests")
 @AllArgsConstructor

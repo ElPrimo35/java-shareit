@@ -1,15 +1,19 @@
 package ru.practicum.shareit.user;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.EmailException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
 @Component
+@RequiredArgsConstructor
 public class UserStorageImp implements UserStorage {
+    private final UserMapper userMapper;
     private final Map<Integer, User> users = new HashMap<>();
     private Integer userIdGenerator = 1;
 
@@ -19,47 +23,45 @@ public class UserStorageImp implements UserStorage {
     }
 
     @Override
-    public User createUser(User user) {
-        if (user.getEmail() == null) {
-            throw new EmailException("User should have an email");
+    public User createUser(UserDto userDto) {
+        User user = userMapper.toUser(userDto, userIdGenerator);
+        if (!isUnique(user.getEmail())) {
+            throw new EmailException("Email already exists");
         }
-        if (isUnique(user.getEmail())) {
-            user.setId(userIdGenerator);
-            users.put(userIdGenerator++, user);
-            return user;
-        }
-        throw new EmailException("Email already exists");
+        users.put(userIdGenerator++, user);
+        return user;
     }
 
     @Override
     public User getUser(Integer userId) {
-        if (users.get(userId) == null) {
+        User user = users.get(userId);
+        if (user == null) {
             throw new NotFoundException("User not found");
         }
-        return users.get(userId);
+        return user;
     }
 
     @Override
-    public User updateUser(User user, Integer userId) {
-        if (users.get(userId) == null) {
-            throw new NotFoundException("User not found");
-        }
-        users.remove(userId);
+    public User updateUser(User user) {
         if (!isUnique(user.getEmail())) {
             throw new EmailException("Email already exists");
         }
-        user.setId(userId);
-        users.put(userId, user);
-        return user;
+        User user1 = users.get(user.getId());
+        if (user.getEmail() != null) {
+            user1.setEmail(user.getEmail());
+        }
+        if (user.getName() != null) {
+            user1.setName(user.getName());
+        }
+        users.put(user.getId(), user1);
+        return user1;
     }
 
     @Override
-    public User deleteUser(Integer userId) {
+    public void deleteUser(Integer userId) {
         if (users.get(userId) == null) {
             throw new NotFoundException("User not found");
         }
-        User user = users.get(userId);
         users.remove(userId);
-        return user;
     }
 }
