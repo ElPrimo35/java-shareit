@@ -1,19 +1,23 @@
 package ru.practicum.shareit.user;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.EmailException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserServiceImp implements UserService {
     private final UserStorage userStorage;
     private final UserMapper userMapper;
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        return userMapper.toDto(userStorage.createUser(userDto));
+        if (!userStorage.isUnique(userDto.getEmail())) {
+            throw new EmailException("Email already exists");
+        }
+        return userMapper.toDto(userStorage.createUser(userMapper.toUser(userDto)));
     }
 
     @Override
@@ -26,7 +30,11 @@ public class UserServiceImp implements UserService {
         if (userStorage.getUser(userId) == null) {
             throw new NotFoundException("User not found");
         }
-        return userMapper.toDto(userStorage.updateUser(userMapper.toUser(userDto, userId)));
+        if (!userStorage.isUnique(userDto.getEmail())) {
+            throw new EmailException("Email already exists");
+        }
+        userDto.setId(userId);
+        return userMapper.toDto(userStorage.updateUser(userMapper.toUser(userDto)));
     }
 
     @Override

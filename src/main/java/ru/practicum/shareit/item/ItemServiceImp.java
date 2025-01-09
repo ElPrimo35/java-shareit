@@ -1,25 +1,31 @@
 package ru.practicum.shareit.item;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestStorage;
 import ru.practicum.shareit.user.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ItemServiceImp implements ItemService {
     private final ItemStorage itemStorage;
     private final ItemMapper itemMapper;
     private final UserStorage userStorage;
+    private final ItemRequestStorage itemRequestStorage;
+
 
     @Override
     public ItemDto createItem(ItemDto itemDto, Integer userId) {
-        return itemMapper.toDto(itemStorage.createItem(itemDto, userId));
+        if (userStorage.getUser(userId) == null) {
+            throw new NotFoundException("User not found");
+        }
+        return itemMapper.toDto(itemStorage.createItem(itemMapper.toItem(itemDto, userStorage.getUser(userId),
+                itemRequestStorage.getRequest(itemDto.getRequest())), userId));
     }
 
     @Override
@@ -27,7 +33,12 @@ public class ItemServiceImp implements ItemService {
         if (itemStorage.getItem(itemId) == null) {
             throw new NotFoundException("Item not found");
         }
-        return itemMapper.toDto(itemStorage.updateItem(itemDto, itemId, userId));
+        if (userStorage.getUser(userId) == null) {
+            throw new NotFoundException("User not found");
+        }
+        itemDto.setId(itemId);
+        return itemMapper.toDto(itemStorage.updateItem(itemMapper.toItem(itemDto, userStorage.getUser(userId),
+                itemRequestStorage.getRequest(itemDto.getRequest())), itemId, userId));
     }
 
     @Override
@@ -43,22 +54,18 @@ public class ItemServiceImp implements ItemService {
         if (userStorage.getUser(userId) == null) {
             throw new NotFoundException("User not found");
         }
-        List<ItemDto> itemDtos = new ArrayList<>();
-        for (Item item : itemStorage.getAllItems(userId)) {
-            itemDtos.add(itemMapper.toDto(item));
-        }
-        return itemDtos;
+        return itemStorage.getAllItems(userId).stream()
+                .map(itemMapper::toDto)
+                .toList();
     }
 
     @Override
     public List<ItemDto> getByDescription(String text, Integer userId) {
-        List<ItemDto> itemDtos = new ArrayList<>();
         if (text.isEmpty()) {
-            return itemDtos;
+            return new ArrayList<>();
         }
-        for (Item item : itemStorage.getByDescription(text, userId)) {
-            itemDtos.add(itemMapper.toDto(item));
-        }
-        return itemDtos;
+        return itemStorage.getByDescription(text, userId).stream()
+                .map(itemMapper::toDto)
+                .toList();
     }
 }

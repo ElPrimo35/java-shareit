@@ -3,7 +3,6 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.HashMap;
@@ -14,31 +13,29 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Component
 public class ItemStorageImp implements ItemStorage {
-    private final ItemMapper itemMapper;
     private final Map<Integer, Item> items = new HashMap<>();
     private Integer itemIdGenerator = 1;
 
-
     @Override
-    public Item createItem(ItemDto itemDto, Integer userId) {
-        Item item = itemMapper.toItem(itemDto, userId, itemIdGenerator);
-        items.put(itemIdGenerator++, item);
+    public Item createItem(Item item, Integer userId) {
+        item.setId(itemIdGenerator++);
+        items.put(item.getId(), item);
         return item;
     }
 
     @Override
-    public Item updateItem(ItemDto itemDto, Integer itemId, Integer userId) {
-        Item item = itemMapper.toItem(itemDto, userId, itemId);
+    public Item updateItem(Item item, Integer itemId, Integer userId) {
         items.put(itemId, item);
         return item;
     }
 
     @Override
     public Item getItem(Integer itemId) {
-        if (items.get(itemId) == null) {
+        Item item = items.get(itemId);
+        if (item == null) {
             throw new NotFoundException("Item not found");
         }
-        return items.get(itemId);
+        return item;
     }
 
     @Override

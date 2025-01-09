@@ -1,10 +1,10 @@
 package ru.practicum.shareit.user;
 
 
-import ru.practicum.shareit.user.dto.UserDto;
-
 public interface UserStorage {
-    User createUser(UserDto user);
+    boolean isUnique(String email);
+
+    User createUser(User user);
 
     User getUser(Integer userId);
 

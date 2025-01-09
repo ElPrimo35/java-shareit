@@ -1,14 +1,13 @@
 package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
 public interface ItemStorage {
-    Item createItem(ItemDto itemDto, Integer userId);
+    Item createItem(Item item, Integer userId);
 
-    Item updateItem(ItemDto itemDto, Integer itemId, Integer userId);
+    Item updateItem(Item item, Integer itemId, Integer userId);
 
     Item getItem(Integer itemId);
 

@@ -2,9 +2,7 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exception.EmailException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,22 +11,19 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class UserStorageImp implements UserStorage {
-    private final UserMapper userMapper;
     private final Map<Integer, User> users = new HashMap<>();
     private Integer userIdGenerator = 1;
 
-    private boolean isUnique(String email) {
+    @Override
+    public boolean isUnique(String email) {
         return users.values().stream()
                 .noneMatch(value -> value.getEmail().equals(email));
     }
 
     @Override
-    public User createUser(UserDto userDto) {
-        User user = userMapper.toUser(userDto, userIdGenerator);
-        if (!isUnique(user.getEmail())) {
-            throw new EmailException("Email already exists");
-        }
-        users.put(userIdGenerator++, user);
+    public User createUser(User user) {
+        user.setId(userIdGenerator++);
+        users.put(user.getId(), user);
         return user;
     }
 
@@ -43,9 +38,6 @@ public class UserStorageImp implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        if (!isUnique(user.getEmail())) {
-            throw new EmailException("Email already exists");
-        }
         User user1 = users.get(user.getId());
         if (user.getEmail() != null) {
             user1.setEmail(user.getEmail());

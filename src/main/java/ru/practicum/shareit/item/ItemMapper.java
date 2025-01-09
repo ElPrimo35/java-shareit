@@ -1,36 +1,32 @@
 package ru.practicum.shareit.item;
 
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.ItemRequestStorage;
-import ru.practicum.shareit.user.UserStorage;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.user.User;
 
-@AllArgsConstructor
 @Component
 public class ItemMapper {
-    private final UserStorage userStorage;
-    private final ItemRequestStorage itemRequestStorage;
 
     public ItemDto toDto(Item item) {
-        return new ItemDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                item.getRequest() != null ? item.getRequest().getId() : null
-        );
+        ItemDto itemDto = new ItemDto();
+        itemDto.setId(item.getId());
+        itemDto.setName(item.getName());
+        itemDto.setDescription(item.getDescription());
+        itemDto.setAvailable(item.getAvailable());
+        itemDto.setRequest(itemDto.getRequest() != null ? item.getRequest().getId() : null);
+        return itemDto;
     }
 
-    public Item toItem(ItemDto itemDto, Integer userId, Integer itemId) {
+    public Item toItem(ItemDto itemDto, User user, ItemRequest itemRequest) {
         Item item = new Item();
-        item.setId(itemId);
+        item.setId(itemDto.getId());
         item.setName(itemDto.getName());
         item.setDescription(itemDto.getDescription());
         item.setAvailable(itemDto.getAvailable());
-        item.setOwner(userStorage.getUser(userId));
-        item.setRequest(itemDto.getRequest() == null ? null : itemRequestStorage.getRequest(itemDto.getRequest()));
+        item.setOwner(user);
+        item.setRequest(itemDto.getRequest() == null ? null : itemRequest);
         return item;
     }
 }
