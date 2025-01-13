@@ -17,14 +17,14 @@ public class ItemStorageImp implements ItemStorage {
     private Integer itemIdGenerator = 1;
 
     @Override
-    public Item createItem(Item item, Integer userId) {
+    public Item createItem(Item item) {
         item.setId(itemIdGenerator++);
         items.put(item.getId(), item);
         return item;
     }
 
     @Override
-    public Item updateItem(Item item, Integer itemId, Integer userId) {
+    public Item updateItem(Item item, Integer itemId) {
         items.put(itemId, item);
         return item;
     }
@@ -46,7 +46,7 @@ public class ItemStorageImp implements ItemStorage {
     }
 
     @Override
-    public List<Item> getByDescription(String text, Integer userId) {
+    public List<Item> getByDescription(String text) {
         return items.values().stream()
                 .filter(item -> item.getName() != null && item.getDescription() != null &&
                         (item.getName().toLowerCase().contains(text.toLowerCase()) ||

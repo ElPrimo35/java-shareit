@@ -21,11 +21,8 @@ public class ItemServiceImp implements ItemService {
 
     @Override
     public ItemDto createItem(ItemDto itemDto, Integer userId) {
-        if (userStorage.getUser(userId) == null) {
-            throw new NotFoundException("User not found");
-        }
         return itemMapper.toDto(itemStorage.createItem(itemMapper.toItem(itemDto, userStorage.getUser(userId),
-                itemRequestStorage.getRequest(itemDto.getRequest())), userId));
+                itemRequestStorage.getRequest(itemDto.getRequest()))));
     }
 
     @Override
@@ -33,27 +30,20 @@ public class ItemServiceImp implements ItemService {
         if (itemStorage.getItem(itemId) == null) {
             throw new NotFoundException("Item not found");
         }
-        if (userStorage.getUser(userId) == null) {
-            throw new NotFoundException("User not found");
-        }
         itemDto.setId(itemId);
         return itemMapper.toDto(itemStorage.updateItem(itemMapper.toItem(itemDto, userStorage.getUser(userId),
-                itemRequestStorage.getRequest(itemDto.getRequest())), itemId, userId));
+                itemRequestStorage.getRequest(itemDto.getRequest())), itemId));
     }
 
     @Override
     public ItemDto getItem(Integer itemId, Integer userId) {
-        if (userStorage.getUser(userId) == null) {
-            throw new NotFoundException("User not found");
-        }
+        userStorage.getUser(userId);
         return itemMapper.toDto(itemStorage.getItem(itemId));
     }
 
     @Override
     public List<ItemDto> getAllItems(Integer userId) {
-        if (userStorage.getUser(userId) == null) {
-            throw new NotFoundException("User not found");
-        }
+        userStorage.getUser(userId);
         return itemStorage.getAllItems(userId).stream()
                 .map(itemMapper::toDto)
                 .toList();
@@ -64,7 +54,7 @@ public class ItemServiceImp implements ItemService {
         if (text.isEmpty()) {
             return new ArrayList<>();
         }
-        return itemStorage.getByDescription(text, userId).stream()
+        return itemStorage.getByDescription(text).stream()
                 .map(itemMapper::toDto)
                 .toList();
     }
