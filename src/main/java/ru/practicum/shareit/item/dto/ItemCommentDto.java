@@ -21,6 +21,6 @@ public class ItemCommentDto {
     private Boolean available;
     private Integer request;
     private Booking lastBooking;
-    private Booking NextBooking;
+    private Booking nextBooking;
     private List<Comment> comments;
 }

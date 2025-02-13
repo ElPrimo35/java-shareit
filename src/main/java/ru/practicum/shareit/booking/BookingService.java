@@ -10,7 +10,7 @@ public interface BookingService {
 
     BookingResponseDto confirmationBooking(Integer id, boolean approved, Integer userId);
 
-    BookingResponseDto getBookingById(Integer BookingId, Integer userId);
+    BookingResponseDto getBookingById(Integer bookingId, Integer userId);
 
     List<BookingResponseDto> getAllBookings(State state, Integer userId);
 
