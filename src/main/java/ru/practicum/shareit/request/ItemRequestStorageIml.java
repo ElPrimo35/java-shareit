@@ -38,6 +38,7 @@ public class ItemRequestStorageIml implements ItemRequestStorage {
             throw new NotFoundException("Request not found");
         }
         ItemRequest itemRequest = requests.get(requestId);
+
         requests.remove(requestId);
     }
 }
