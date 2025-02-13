@@ -25,7 +25,7 @@ public class ItemRequestController {
     }
 
     @DeleteMapping("/{requestId}")
-    public ItemRequest deleteRequest(@PathVariable Integer requestId) {
-        return itemRequestService.deleteRequest(requestId);
+    public void deleteRequest(@PathVariable Integer requestId) {
+        itemRequestService.deleteRequest(requestId);
     }
 }

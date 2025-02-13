@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
 
 import java.util.List;
 
@@ -13,27 +14,27 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public BookingDto createBooking(@RequestBody BookingDto bookingDto) {
-        return bookingService.createBooking(bookingDto);
+    public BookingResponseDto createBooking(@RequestBody BookingDto bookingDto, @RequestHeader("X-Sharer-User-Id") Integer userId) {
+        return bookingService.createBooking(bookingDto, userId);
     }
 
-    @GetMapping("/{id}")
-    public BookingDto getBookingDto(@PathVariable Integer id) {
-        return bookingService.getBookingDto(id);
+    @PatchMapping("/{bookingId}")
+    public BookingResponseDto confirmationBooking(@PathVariable Integer bookingId, @RequestParam boolean approved, @RequestHeader("X-Sharer-User-Id") Integer userId) {
+        return bookingService.confirmationBooking(bookingId, approved, userId);
+    }
+
+    @GetMapping("/{bookingId}")
+    public BookingResponseDto getBookingById(@PathVariable Integer bookingId, @RequestHeader("X-Sharer-User-Id") Integer userId) {
+        return bookingService.getBookingById(bookingId, userId);
     }
 
     @GetMapping
-    public List<BookingDto> getAllBookings() {
-        return bookingService.getAllBookings();
+    public List<BookingResponseDto> getAllBookings(@RequestParam(required = false) State state, @RequestHeader("X-Sharer-User-Id") Integer userId) {
+        return bookingService.getAllBookings(state, userId);
     }
 
-    @PatchMapping("/{id}")
-    public BookingDto updateBooking(@RequestBody BookingDto bookingDto, @PathVariable Integer id) {
-        return bookingService.updateBooking(bookingDto, id);
-    }
-
-    @DeleteMapping("/{id}")
-    public BookingDto deleteBooking(@PathVariable Integer id) {
-        return bookingService.deleteBooking(id);
+    @GetMapping("/owner")
+    public List<BookingResponseDto> getOwnerBookings(@RequestParam(required = false) State state, @RequestHeader("X-Sharer-User-Id") Integer userId) {
+        return bookingService.getOwnerBookings(state, userId);
     }
 }
