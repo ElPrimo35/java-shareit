@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemCommentDto;
@@ -124,11 +123,12 @@ public class ItemServiceImp implements ItemService {
     public CommentDto createComment(Integer itemId, CommentDto commentDto, Integer userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Item not found"));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
-        Comment comment = commentMapper.toComment(commentDto, item, user, LocalDateTime.now());
         List<Booking> bookings = bookingRepository.findBookingsByUserIdOrderByStartDesc(userId);
-        boolean isAnyApproved = bookings.stream()
-                .anyMatch(booking -> booking.getStatus().equals(Status.APPROVED));
-        if (!isAnyApproved) {
+        if (bookings.isEmpty()) {
+            throw new RuntimeException("This user cannot comment");
+        }
+        Comment comment = commentMapper.toComment(commentDto, item, user, LocalDateTime.now());
+        if (bookings.getFirst().getEnd().isAfter(comment.getCreated())) {
             throw new RuntimeException("This user cannot comment");
         }
         return commentMapper.toDto(commentRepository.save(comment));
