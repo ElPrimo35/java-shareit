@@ -34,6 +34,7 @@ public class ItemServiceImp implements ItemService {
     @Override
     public ItemDto createItem(ItemDto itemDto, Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+
         ItemRequest request = itemRequestStorage.getRequest(itemDto.getRequest());
         Item item = itemRepository.save(itemMapper.toItem(itemDto, user, request));
         return itemMapper.toDto(item);
