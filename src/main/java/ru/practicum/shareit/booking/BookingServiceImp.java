@@ -26,6 +26,7 @@ public class BookingServiceImp implements BookingService {
 
 
     @Override
+    @Transactional
     public BookingResponseDto createBooking(BookingDto bookingDto, Integer userId) {
         Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(() -> new NotFoundException("Item not found"));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
@@ -34,9 +35,6 @@ public class BookingServiceImp implements BookingService {
         }
         if (bookingDto.getEnd().isBefore(bookingDto.getStart()) || bookingDto.getStart().isEqual(bookingDto.getEnd())) {
             throw new RuntimeException("end should be after start");
-        }
-        if (bookingDto.getStart().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("start cannot be in past");
         }
         Booking booking = bookingRepository.save(bookingMapper.toBooking(bookingDto, item, Status.WAITING, user));
         return bookingMapper.toResponseDto(booking);
