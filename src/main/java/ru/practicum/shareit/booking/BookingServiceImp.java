@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
@@ -41,12 +43,10 @@ public class BookingServiceImp implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingResponseDto confirmationBooking(Integer bookingId, boolean approved, Integer userId) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Booking not found"));
-        Item item = itemRepository.findById(booking.getItem().getId()).orElseThrow(() -> new NotFoundException("Item not found"));
-        if (!Objects.equals(item.getOwner().getId(), userId)) {
-            throw new RuntimeException("Only owner can confirm booking");
-        }
+        Booking booking = bookingRepository.findBookingByIdAndOwnerId(bookingId, userId);
+
         booking.setStatus(approved ? Status.APPROVED : Status.REJECTED);
         bookingRepository.save(booking);
         return bookingMapper.toResponseDto(booking);
@@ -54,17 +54,14 @@ public class BookingServiceImp implements BookingService {
 
     @Override
     public BookingResponseDto getBookingById(Integer bookingId, Integer userId) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("booking not found"));
-        Item item = itemRepository.findById(booking.getItem().getId()).orElseThrow(() -> new NotFoundException("Item not found"));
-        if (!(Objects.equals(booking.getBooker().getId(), userId) || Objects.equals(item.getOwner().getId(), userId))) {
-            throw new RuntimeException("Available only for booker or owner");
-        }
+        Booking booking = bookingRepository.findBookingByIdAndBooker_Id(bookingId, userId);
         return bookingMapper.toResponseDto(booking);
     }
 
     @Override
     public List<BookingResponseDto> getAllBookings(State state, Integer userId) {
-        List<BookingResponseDto> bookingDtos = bookingRepository.findBookingsByUserIdOrderByStartDesc(userId).stream().map(bookingMapper::toResponseDto).toList();
+        Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
+        List<BookingResponseDto> bookingDtos = stateHandler(state, bookingRepository.findBookingsByBooker_Id(userId, newestFirst).stream().map(bookingMapper::toResponseDto).toList());
         return stateHandler(state, bookingDtos);
     }
 
@@ -73,38 +70,41 @@ public class BookingServiceImp implements BookingService {
 
         List<Integer> ownerItemIds = itemRepository.findByUserId(userId).stream().map(Item::getId).toList();
 
-        List<BookingResponseDto> bookingDtos = bookingRepository.findBookingsByItemIdsOrderByStartDesc(ownerItemIds).stream().map(bookingMapper::toResponseDto).toList();
+        Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
+        List<BookingResponseDto> bookingDtos = stateHandler(state, bookingRepository.findBookingsByItemIds(ownerItemIds, newestFirst).stream().map(bookingMapper::toResponseDto).toList());
+
         boolean isUserWrong = bookingDtos.stream().anyMatch(bookingSecondDto -> !Objects.equals(bookingSecondDto.getBooker().getId(), userId));
         if (!isUserWrong) {
             throw new RuntimeException("Wrong user");
         }
-        return stateHandler(state, bookingDtos);
+        return bookingDtos;
     }
 
-    private List<BookingResponseDto> stateHandler(State state, List<BookingResponseDto> bookingDtos) {
+    private List<BookingResponseDto> stateHandler(State state, List<BookingResponseDto> bookingResponseDtos) {
+        Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
         if (state == null) {
             state = State.All;
         }
         switch (state) {
             case All -> {
-                return bookingDtos;
+                return bookingResponseDtos;
             }
             case CURRENT -> {
-                return bookingDtos.stream().filter(bookingSecondDto -> LocalDateTime.now().isAfter(bookingSecondDto.getStart()) && LocalDateTime.now().isBefore(bookingSecondDto.getEnd())).toList();
+                return bookingRepository.findBookingsByStartBeforeAndEndAfter(LocalDateTime.now(), newestFirst).stream().map(bookingMapper::toResponseDto).toList();
             }
             case PAST -> {
-                return bookingDtos.stream().filter(bookingSecondDto -> LocalDateTime.now().isAfter(bookingSecondDto.getEnd())).toList();
+                return bookingRepository.findBookingsByEndBefore(LocalDateTime.now(), newestFirst).stream().map(bookingMapper::toResponseDto).toList();
             }
             case FUTURE -> {
-                return bookingDtos.stream().filter(bookingSecondDto -> LocalDateTime.now().isBefore(bookingSecondDto.getStart())).toList();
+                return bookingRepository.findBookingsByStartAfter(LocalDateTime.now(), newestFirst).stream().map(bookingMapper::toResponseDto).toList();
             }
             case WAITING -> {
-                return bookingDtos.stream().filter(bookingSecondDto -> bookingSecondDto.getStatus().equals(Status.WAITING)).toList();
+                return bookingRepository.findBookingsByStatus(Status.WAITING, newestFirst).stream().map(bookingMapper::toResponseDto).toList();
             }
             case REJECTED -> {
-                return bookingDtos.stream().filter(bookingSecondDto -> bookingSecondDto.getStatus().equals(Status.REJECTED)).toList();
+                return bookingRepository.findBookingsByStatus(Status.REJECTED, newestFirst).stream().map(bookingMapper::toResponseDto).toList();
             }
         }
-        return bookingDtos;
+        return bookingResponseDtos;
     }
 }

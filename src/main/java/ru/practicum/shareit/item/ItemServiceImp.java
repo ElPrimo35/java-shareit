@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -12,6 +13,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.ItemRequestStorage;
+import ru.practicum.shareit.request.RequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -62,8 +64,9 @@ public class ItemServiceImp implements ItemService {
     public ItemCommentDto getItem(Integer itemId, Integer userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Item not found"));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
-        List<Comment> comments = commentRepository.findAllByItemId(itemId);
-        List<Booking> itemBookings = bookingRepository.findBookingsByItemIdOrderByStartDesc(itemId).stream()
+        List<Comment> comments = commentRepository.findAllByItem_Id(itemId);
+        Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
+        List<Booking> itemBookings = bookingRepository.findBookingsByItem_Id(itemId, newestFirst).stream()
                 .toList();
         Booking lastBooking;
         Booking nextBooking;
@@ -113,7 +116,7 @@ public class ItemServiceImp implements ItemService {
 
     @Override
     public List<CommentDto> getItemComments(Integer itemId, Integer userId) {
-        List<Comment> comments = commentRepository.findAllByItemId(itemId);
+        List<Comment> comments = commentRepository.findAllByItem_Id(itemId);
         return comments.stream()
                 .map(commentMapper::toDto)
                 .toList();
@@ -123,7 +126,9 @@ public class ItemServiceImp implements ItemService {
     public CommentDto createComment(Integer itemId, CommentDto commentDto, Integer userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Item not found"));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
-        List<Booking> bookings = bookingRepository.findBookingsByUserIdOrderByStartDesc(userId);
+        Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
+        List<Booking> bookings = bookingRepository.findBookingsByBooker_Id(userId, newestFirst);
+//        List<Booking> bookings = bookingRepository.findBookingsByUserIdOrderByStartDesc(userId);
         if (bookings.isEmpty()) {
             throw new RuntimeException("This user cannot comment");
         }
