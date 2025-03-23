@@ -52,8 +52,12 @@ public class BookingServiceImp implements BookingService {
 
     @Override
     public BookingResponseDto getBookingById(Integer bookingId, Integer userId) {
-        Booking booking = bookingRepository.findBookingByIdAndBooker_Id(bookingId, userId);
-        return bookingMapper.toResponseDto(booking);
+        Booking booking = bookingRepository.findBookingByIdAndOwnerId(bookingId, userId);
+        Booking booking1 = bookingRepository.findBookingByIdAndBooker_Id(bookingId, userId);
+        if (booking != null) {
+            return bookingMapper.toResponseDto(booking);
+        }
+        return bookingMapper.toResponseDto(booking1);
     }
 
     @Override
