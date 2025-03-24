@@ -12,6 +12,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> findBookingsByBooker_Id(Integer bookerId, Sort sort);
 
     List<Booking> findBookingsByItem_Id(Integer itemId, Sort sort);
+
     @Query("select b from Booking b join b.item i where b.id = ?1 and i.owner.id = ?2")
     Optional<Booking> findBookingByIdAndOwnerId(Integer bookingId, Integer ownerId);
 
