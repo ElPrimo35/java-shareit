@@ -61,7 +61,7 @@ public class BookingServiceImp implements BookingService {
     public BookingResponseDto getBookingById(Integer bookingId, Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
         return bookingRepository.findById(bookingId)
-                .filter(b -> b.getBooker().getId() == userId || b.getItem().getOwner().getId() == userId)
+                .filter(b -> Objects.equals(b.getBooker().getId(), userId) || Objects.equals(b.getItem().getOwner().getId(), userId))
                 .map(bookingMapper::toResponseDto)
                 .orElseThrow(() -> new NotFoundException("Booking with id=" + bookingId + " not found"));
     }
