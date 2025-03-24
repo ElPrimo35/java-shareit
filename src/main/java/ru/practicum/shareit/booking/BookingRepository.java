@@ -6,27 +6,40 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> findBookingsByBooker_Id(Integer bookerId, Sort sort);
 
     List<Booking> findBookingsByItem_Id(Integer itemId, Sort sort);
-
-    @Query("select b from Booking b where b.item.id in ?1")
-    List<Booking> findBookingsByItemIds(List<Integer> itemIds, Sort sort);
-
-    Booking findBookingByIdAndBooker_Id(Integer bookingId, Integer bookerId);
-
-    @Query("select b from Booking b where b.start < :currentDate and b.end > :currentDate")
-    List<Booking> findBookingsByStartBeforeAndEndAfter(LocalDateTime currentDate, Sort sort);
-
     @Query("select b from Booking b join b.item i where b.id = ?1 and i.owner.id = ?2")
-    Booking findBookingByIdAndOwnerId(Integer bookingId, Integer ownerId);
+    Optional<Booking> findBookingByIdAndOwnerId(Integer bookingId, Integer ownerId);
 
-    List<Booking> findBookingsByEndBefore(LocalDateTime currentDate, Sort sort);
+    List<Booking> findByItem_Owner_Id(Integer userId, Sort newestFirst);
 
-    List<Booking> findBookingsByStartAfter(LocalDateTime currentDate, Sort sort);
+    List<Booking> findByItem_Owner_IdAndEndIsBefore(Integer userId, LocalDateTime currentTime, Sort newestFirst);
 
+    List<Booking> findByItem_Owner_IdAndStartIsAfter(Integer userId, LocalDateTime currentTime, Sort newestFirst);
 
-    List<Booking> findBookingsByStatus(Status status, Sort sort);
+    List<Booking> findByBooker_Id(Integer userId, Sort newestFirst);
+
+    List<Booking> findByBooker_IdAndEndIsBefore(Integer userId, LocalDateTime currentTime, Sort newestFirst);
+
+    List<Booking> findByBooker_IdAndStartIsAfter(Integer userId, LocalDateTime currentTime, Sort newestFirst);
+
+    @Query("select b from Booking b join b.item i " +
+            "where b.start < ?2 " +
+            "and b.end > ?2 " +
+            "and i.owner.id = ?1")
+    List<Booking> findByItemOwnerIdAndStartBeforeAndEndAfter(Integer ownerId, LocalDateTime currentDate, Sort newestFirst);
+
+    @Query("select b from Booking b " +
+            "where b.start < ?2 " +
+            "and b.end > ?2 " +
+            "and b.booker.id = ?1")
+    List<Booking> findByBookerIdAndStartBeforeAndEndAfter(Integer bookerId, LocalDateTime currentDate, Sort newestFirst);
+
+    List<Booking> findByItem_Owner_IdAndStatus(Integer userId, Status status, Sort newestFirst);
+
+    List<Booking> findByBooker_IdAndStatus(Integer userId, Status status, Sort newestFirst);
 }

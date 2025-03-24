@@ -15,6 +15,7 @@ import ru.practicum.shareit.user.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -43,70 +44,102 @@ public class BookingServiceImp implements BookingService {
     @Override
     @Transactional
     public BookingResponseDto confirmationBooking(Integer bookingId, boolean approved, Integer userId) {
-        Booking booking = bookingRepository.findBookingByIdAndOwnerId(bookingId, userId);
-
+        Optional<Booking> booking1 = bookingRepository.findBookingByIdAndOwnerId(bookingId, userId);
+        if (booking1.isEmpty()) {
+            throw new RuntimeException();
+        }
+        Booking booking = bookingRepository.findBookingByIdAndOwnerId(bookingId, userId)
+                .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
+                .orElseThrow(() -> new NotFoundException("Бронирование не найдено или уже началось"));
         booking.setStatus(approved ? Status.APPROVED : Status.REJECTED);
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
         bookingRepository.save(booking);
         return bookingMapper.toResponseDto(booking);
     }
 
     @Override
     public BookingResponseDto getBookingById(Integer bookingId, Integer userId) {
-        Booking booking = bookingRepository.findBookingByIdAndOwnerId(bookingId, userId);
-        Booking booking1 = bookingRepository.findBookingByIdAndBooker_Id(bookingId, userId);
-        if (booking != null) {
-            return bookingMapper.toResponseDto(booking);
-        }
-        return bookingMapper.toResponseDto(booking1);
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+        return bookingRepository.findById(bookingId)
+                .filter(b -> b.getBooker().getId() == userId || b.getItem().getOwner().getId() == userId)
+                .map(bookingMapper::toResponseDto)
+                .orElseThrow(() -> new NotFoundException("Booking with id=" + bookingId + " not found"));
     }
 
     @Override
     public List<BookingResponseDto> getAllBookings(State state, Integer userId) {
-        Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
-        List<BookingResponseDto> bookingDtos = stateHandler(state, bookingRepository.findBookingsByBooker_Id(userId, newestFirst).stream().map(bookingMapper::toResponseDto).toList());
-        return stateHandler(state, bookingDtos);
-    }
-
-    @Override
-    public List<BookingResponseDto> getOwnerBookings(State state, Integer userId) {
-
-        List<Integer> ownerItemIds = itemRepository.findByUserId(userId).stream().map(Item::getId).toList();
-
-        Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
-        List<BookingResponseDto> bookingDtos = stateHandler(state, bookingRepository.findBookingsByItemIds(ownerItemIds, newestFirst).stream().map(bookingMapper::toResponseDto).toList());
-
-        boolean isUserWrong = bookingDtos.stream().anyMatch(bookingSecondDto -> !Objects.equals(bookingSecondDto.getBooker().getId(), userId));
-        if (!isUserWrong) {
-            throw new RuntimeException("Wrong user");
-        }
-        return bookingDtos;
-    }
-
-    private List<BookingResponseDto> stateHandler(State state, List<BookingResponseDto> bookingResponseDtos) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+        List<BookingResponseDto> bookingDtos = null;
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
         if (state == null) {
             state = State.All;
         }
         switch (state) {
             case All -> {
-                return bookingResponseDtos;
-            }
-            case CURRENT -> {
-                return bookingRepository.findBookingsByStartBeforeAndEndAfter(LocalDateTime.now(), newestFirst).stream().map(bookingMapper::toResponseDto).toList();
+                bookingDtos = bookingRepository.findByBooker_Id(userId, newestFirst)
+                        .stream().map(bookingMapper::toResponseDto).toList();
             }
             case PAST -> {
-                return bookingRepository.findBookingsByEndBefore(LocalDateTime.now(), newestFirst).stream().map(bookingMapper::toResponseDto).toList();
+                bookingDtos = bookingRepository.findByBooker_IdAndEndIsBefore(userId, LocalDateTime.now(), newestFirst)
+                        .stream().map(bookingMapper::toResponseDto).toList();
             }
             case FUTURE -> {
-                return bookingRepository.findBookingsByStartAfter(LocalDateTime.now(), newestFirst).stream().map(bookingMapper::toResponseDto).toList();
+                bookingDtos = bookingRepository.findByBooker_IdAndStartIsAfter(userId, LocalDateTime.now(), newestFirst)
+                        .stream().map(bookingMapper::toResponseDto).toList();
+            }
+            case CURRENT -> {
+                bookingDtos = bookingRepository.findByBookerIdAndStartBeforeAndEndAfter(userId, LocalDateTime.now(), newestFirst)
+                        .stream().map(bookingMapper::toResponseDto).toList();
             }
             case WAITING -> {
-                return bookingRepository.findBookingsByStatus(Status.WAITING, newestFirst).stream().map(bookingMapper::toResponseDto).toList();
+                bookingDtos = bookingRepository.findByBooker_IdAndStatus(userId, Status.WAITING, newestFirst)
+                        .stream().map(bookingMapper::toResponseDto).toList();
             }
             case REJECTED -> {
-                return bookingRepository.findBookingsByStatus(Status.REJECTED, newestFirst).stream().map(bookingMapper::toResponseDto).toList();
+                bookingDtos = bookingRepository.findByBooker_IdAndStatus(userId, Status.REJECTED, newestFirst)
+                        .stream().map(bookingMapper::toResponseDto).toList();
             }
         }
-        return bookingResponseDtos;
+        return bookingDtos;
+    }
+
+    @Override
+    public List<BookingResponseDto> getOwnerBookings(State state, Integer userId) {
+        Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
+        List<BookingResponseDto> bookingDtos = null;
+        if (state == null) {
+            state = State.All;
+        }
+        switch (state) {
+            case All -> {
+                bookingDtos = bookingRepository.findByItem_Owner_Id(userId, newestFirst)
+                        .stream().map(bookingMapper::toResponseDto).toList();
+            }
+            case PAST -> {
+                bookingDtos = bookingRepository.findByItem_Owner_IdAndEndIsBefore(userId, LocalDateTime.now(), newestFirst)
+                        .stream().map(bookingMapper::toResponseDto).toList();
+            }
+            case FUTURE -> {
+                bookingDtos = bookingRepository.findByItem_Owner_IdAndStartIsAfter(userId, LocalDateTime.now(), newestFirst)
+                        .stream().map(bookingMapper::toResponseDto).toList();
+            }
+            case CURRENT -> {
+                bookingDtos = bookingRepository.findByItemOwnerIdAndStartBeforeAndEndAfter(userId, LocalDateTime.now(), newestFirst)
+                        .stream().map(bookingMapper::toResponseDto).toList();
+            }
+            case WAITING -> {
+                bookingDtos = bookingRepository.findByItem_Owner_IdAndStatus(userId, Status.WAITING, newestFirst)
+                        .stream().map(bookingMapper::toResponseDto).toList();
+            }
+            case REJECTED -> {
+                bookingDtos = bookingRepository.findByItem_Owner_IdAndStatus(userId, Status.REJECTED, newestFirst)
+                        .stream().map(bookingMapper::toResponseDto).toList();
+            }
+        }
+        boolean isUserWrong = bookingDtos.stream().anyMatch(bookingSecondDto -> !Objects.equals(bookingSecondDto.getBooker().getId(), userId));
+        if (!isUserWrong) {
+            throw new RuntimeException("Wrong user");
+        }
+        return bookingDtos;
     }
 }
