@@ -7,5 +7,5 @@ public interface ItemRequestStorage {
 
     ItemRequest updateRequest(ItemRequest itemRequest, Integer requestId);
 
-    ItemRequest deleteRequest(Integer requestId);
+    void deleteRequest(Integer requestId);
 }

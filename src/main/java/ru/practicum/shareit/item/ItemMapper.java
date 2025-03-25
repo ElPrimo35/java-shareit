@@ -1,10 +1,15 @@
 package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.item.dto.ItemCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
+
+import java.util.List;
 
 @Component
 public class ItemMapper {
@@ -15,7 +20,7 @@ public class ItemMapper {
         itemDto.setName(item.getName());
         itemDto.setDescription(item.getDescription());
         itemDto.setAvailable(item.getAvailable());
-        itemDto.setRequest(itemDto.getRequest() != null ? item.getRequest().getId() : null);
+        itemDto.setRequest(item.getRequest() != null ? item.getRequest().getId() : null);
         return itemDto;
     }
 
@@ -28,5 +33,18 @@ public class ItemMapper {
         item.setOwner(user);
         item.setRequest(itemDto.getRequest() == null ? null : itemRequest);
         return item;
+    }
+
+    public ItemCommentDto toCommentDto(Item item, Booking lastBooking, Booking nextBooking, List<Comment> comments) {
+        ItemCommentDto itemCommentDto = new ItemCommentDto();
+        itemCommentDto.setId(item.getId());
+        itemCommentDto.setName(item.getName());
+        itemCommentDto.setDescription(item.getDescription());
+        itemCommentDto.setAvailable(item.getAvailable());
+        itemCommentDto.setRequest(item.getRequest() != null ? item.getRequest().getId() : null);
+        itemCommentDto.setLastBooking(lastBooking);
+        itemCommentDto.setNextBooking(nextBooking);
+        itemCommentDto.setComments(comments);
+        return itemCommentDto;
     }
 }
