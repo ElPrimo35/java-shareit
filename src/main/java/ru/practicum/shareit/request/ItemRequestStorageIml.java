@@ -33,12 +33,12 @@ public class ItemRequestStorageIml implements ItemRequestStorage {
     }
 
     @Override
-    public ItemRequest deleteRequest(Integer requestId) {
+    public void deleteRequest(Integer requestId) {
         if (requests.get(requestId) == null) {
             throw new NotFoundException("Request not found");
         }
         ItemRequest itemRequest = requests.get(requestId);
+
         requests.remove(requestId);
-        return itemRequest;
     }
 }

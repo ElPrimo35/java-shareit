@@ -2,28 +2,32 @@ package ru.practicum.shareit.booking;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.User;
 
 @Component
 public class BookingMapper {
-    public Booking toBooking(BookingDto bookingDto, Integer id) {
+    public Booking toBooking(BookingDto bookingDto, Item item, Status status, User user) {
         Booking booking = new Booking();
-        booking.setId(id);
+        booking.setId(booking.getId());
         booking.setStart(bookingDto.getStart());
         booking.setEnd(bookingDto.getEnd());
-        booking.setItem(bookingDto.getItem());
-        booking.setBooker(bookingDto.getBooker());
-        booking.setStatus(bookingDto.getStatus());
+        booking.setItem(item);
+        booking.setBooker(user);
+        booking.setStatus(status);
         return booking;
     }
 
-    public BookingDto toDto(Booking booking, Integer id) {
-        BookingDto bookingDto = new BookingDto();
-        bookingDto.setId(id);
-        bookingDto.setStart(booking.getStart());
-        bookingDto.setEnd(booking.getStart());
-        bookingDto.setItem(booking.getItem());
-        bookingDto.setBooker(booking.getBooker());
-        bookingDto.setStatus(booking.getStatus());
-        return bookingDto;
+    public BookingResponseDto toResponseDto(Booking booking) {
+        BookingResponseDto bookingResponseDto = new BookingResponseDto();
+        bookingResponseDto.setId(booking.getId());
+        bookingResponseDto.setStart(booking.getStart());
+        bookingResponseDto.setEnd(booking.getEnd());
+        bookingResponseDto.setItem(booking.getItem());
+        bookingResponseDto.setBooker(booking.getBooker());
+        bookingResponseDto.setStatus(booking.getStatus());
+        return bookingResponseDto;
     }
+
 }
