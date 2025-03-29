@@ -49,6 +49,7 @@ insert into bookings(start_date, end_date, item_id, booker_id, status) values ('
 insert into bookings(start_date, end_date, item_id, booker_id, status) values ('2023-12-12', '2027-12-12', 5, 14, 'APPROVED')
 insert into bookings(start_date, end_date, item_id, booker_id, status) values ('2023-12-12', '2027-12-12', 5, 14, 'WAITING')
 insert into bookings(start_date, end_date, item_id, booker_id, status) values ('2023-12-12', '2027-12-12', 5, 14, 'REJECTED')
+insert into bookings(start_date, end_date, item_id, booker_id, status) values ('2023-12-12', '2027-12-12', 5, 17, 'REJECTED')
 
 
 insert into comments(text, item_id, author_id, created) values ('Test', 1, 1, '2024-12-12')

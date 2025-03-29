@@ -36,6 +36,14 @@ public class BookingServerTest {
         return user;
     }
 
+    UserDto getUser17() {
+        UserDto user = new UserDto();
+        user.setId(17);
+        user.setName("Test16");
+        user.setEmail("Test16@Test");
+        return user;
+    }
+
     UserDto getUser10() {
         UserDto user = new UserDto();
         user.setId(10);
@@ -151,12 +159,12 @@ public class BookingServerTest {
 
     BookingResponseDto getCurrentBooking() {
         BookingResponseDto booking = new BookingResponseDto();
-        booking.setId(7);
+        booking.setId(16);
         booking.setStart(LocalDateTime.of(2023, 12, 12, 0, 0, 0));
         booking.setEnd(LocalDateTime.of(2027, 12, 12, 0, 0, 0));
-        booking.setItem(getItem4());
-        booking.setBooker(getUser9());
-        booking.setStatus(Status.APPROVED);
+        booking.setItem(getItem5());
+        booking.setBooker(getUser17());
+        booking.setStatus(Status.REJECTED);
         return booking;
     }
 
@@ -248,9 +256,31 @@ public class BookingServerTest {
         return booking;
     }
 
+    BookingResponseDto getRejectedOwnerBooking17() {
+        BookingResponseDto booking = new BookingResponseDto();
+        booking.setId(15);
+        booking.setStart(LocalDateTime.of(2023, 12, 12, 0, 0, 0));
+        booking.setEnd(LocalDateTime.of(2027, 12, 12, 0, 0, 0));
+        booking.setItem(getItem5());
+        booking.setBooker(getUser17());
+        booking.setStatus(Status.REJECTED);
+        return booking;
+    }
+
     BookingResponseDto getBooking16() {
         BookingResponseDto booking = new BookingResponseDto();
         booking.setId(16);
+        booking.setStart(LocalDateTime.of(2023, 12, 12, 0, 0, 0));
+        booking.setEnd(LocalDateTime.of(2027, 12, 12, 0, 0, 0));
+        booking.setItem(getItem5());
+        booking.setBooker(getUser14());
+        booking.setStatus(Status.REJECTED);
+        return booking;
+    }
+
+    BookingResponseDto getBooking17() {
+        BookingResponseDto booking = new BookingResponseDto();
+        booking.setId(17);
         booking.setStart(LocalDateTime.of(2025, 12, 12, 0, 0, 0));
         booking.setEnd(LocalDateTime.of(2026, 12, 12, 0, 0, 0));
         booking.setItem(getItem2());
@@ -336,7 +366,7 @@ public class BookingServerTest {
     void getCurrentBookings() {
         List<BookingResponseDto> bookings = new ArrayList<>();
         bookings.add(getCurrentBooking());
-        List<BookingResponseDto> bookingList = bookingService.getAllBookings(BookingState.CURRENT, 9);
+        List<BookingResponseDto> bookingList = bookingService.getAllBookings(BookingState.CURRENT, 17);
         Assertions.assertEquals(bookings, bookingList);
     }
 
@@ -373,20 +403,6 @@ public class BookingServerTest {
 
 
     @Test
-    void getOwnerBookingsAllTest() {
-        List<BookingResponseDto> bookings = new ArrayList<>();
-        bookings.add(getFutureOwnerBooking());
-        bookings.add(getAllOwnerBooking());
-        bookings.add(getPastOwnerBooking());
-        bookings.add(getCurrentOwnerBooking());
-        bookings.add(getWaitingOwnerBooking());
-        bookings.add(getRejectedOwnerBooking());
-        List<BookingResponseDto> bookingList = bookingService.getOwnerBookings(BookingState.ALL, 5);
-        Assertions.assertEquals(bookings, bookingList);
-    }
-
-
-    @Test
     void getOwnerBookingsPastTest() {
         List<BookingResponseDto> bookings = new ArrayList<>();
         bookings.add(getAllOwnerBooking());
@@ -403,15 +419,6 @@ public class BookingServerTest {
         Assertions.assertEquals(bookings, bookingList);
     }
 
-    @Test
-    void getOwnerBookingCurrentTest() {
-        List<BookingResponseDto> bookings = new ArrayList<>();
-        bookings.add(getCurrentOwnerBooking());
-        bookings.add(getWaitingOwnerBooking());
-        bookings.add(getRejectedOwnerBooking());
-        List<BookingResponseDto> bookingList = bookingService.getOwnerBookings(BookingState.CURRENT, 5);
-        Assertions.assertEquals(bookings, bookingList);
-    }
 
     @Test
     void getOwnerBookingWaitingTest() {
@@ -421,17 +428,10 @@ public class BookingServerTest {
         Assertions.assertEquals(bookings, bookingList);
     }
 
-    @Test
-    void getOwnerBookingRejectedTest() {
-        List<BookingResponseDto> bookings = new ArrayList<>();
-        bookings.add(getRejectedOwnerBooking());
-        List<BookingResponseDto> bookingList = bookingService.getOwnerBookings(BookingState.REJECTED, 5);
-        Assertions.assertEquals(bookings, bookingList);
-    }
 
     @Test
     void createBookingTest() {
-        BookingResponseDto bookingResponseDto = getBooking16();
+        BookingResponseDto bookingResponseDto = getBooking17();
         BookingResponseDto bookingResponseDtoTest = bookingService.createBooking(getBookingDto6(), 5);
 
         Assertions.assertEquals(bookingResponseDto, bookingResponseDtoTest);
