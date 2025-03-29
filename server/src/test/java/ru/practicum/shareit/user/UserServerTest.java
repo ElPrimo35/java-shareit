@@ -39,7 +39,6 @@ public class UserServerTest {
 
     UserDto getUser3() {
         UserDto user = new UserDto();
-        user.setId(21);
         user.setName("Test");
         user.setEmail("Test@Test123");
         return user;

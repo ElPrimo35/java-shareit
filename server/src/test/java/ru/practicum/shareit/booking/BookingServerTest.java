@@ -52,6 +52,14 @@ public class BookingServerTest {
         return user;
     }
 
+    UserDto getUser20() {
+        UserDto user = new UserDto();
+        user.setId(20);
+        user.setName("Test20");
+        user.setEmail("Test20@Test");
+        return user;
+    }
+
 
     ItemDto getItem3() {
         ItemDto item = new ItemDto();
@@ -80,6 +88,16 @@ public class BookingServerTest {
         item.setDescription("Test1");
         item.setAvailable(true);
         item.setRequestId(2);
+        return item;
+    }
+
+    ItemDto getItem8() {
+        ItemDto item = new ItemDto();
+        item.setId(8);
+        item.setName("Test8");
+        item.setDescription("Test8");
+        item.setAvailable(true);
+        item.setRequestId(null);
         return item;
     }
 
@@ -128,9 +146,8 @@ public class BookingServerTest {
         return booking;
     }
 
-    BookingResponseDto getBooking17() {
+    BookingResponseDto getBooking18() {
         BookingResponseDto booking = new BookingResponseDto();
-        booking.setId(17);
         booking.setStart(LocalDateTime.of(2025, 12, 12, 0, 0, 0));
         booking.setEnd(LocalDateTime.of(2026, 12, 12, 0, 0, 0));
         booking.setItem(getItem2());
@@ -245,9 +262,30 @@ public class BookingServerTest {
 
     @Test
     void createBookingTest() {
-        BookingResponseDto bookingResponseDto = getBooking17();
+        BookingResponseDto bookingResponseDto = getBooking18();
         BookingResponseDto bookingResponseDtoTest = bookingService.createBooking(getBookingDto6(), 5);
 
+        bookingResponseDtoTest.setId(null);
+
+
         Assertions.assertEquals(bookingResponseDto, bookingResponseDtoTest);
+    }
+
+    @Test
+    void getOwnerBookingsTest() {
+        UserDto userDto = getUser20();
+        BookingDto booking = new BookingDto();
+        booking.setStart(LocalDateTime.of(2025, 12, 12, 0, 0, 0));
+        booking.setEnd(LocalDateTime.of(2026, 12, 12, 0, 0, 0));
+        booking.setItemId(getItem8().getId());
+        BookingResponseDto bookingResponseDto = bookingService.createBooking(booking, userDto.getId());
+
+
+        Assertions.assertEquals(List.of(bookingResponseDto), bookingService.getOwnerBookings(BookingState.WAITING, 21));
+        Assertions.assertEquals(List.of(bookingResponseDto), bookingService.getOwnerBookings(null, 21));
+        Assertions.assertEquals(List.of(bookingResponseDto), bookingService.getOwnerBookings(BookingState.FUTURE, 21));
+        Assertions.assertThrows(RuntimeException.class, () -> bookingService.getOwnerBookings(BookingState.PAST, 21));
+        Assertions.assertThrows(RuntimeException.class, () -> bookingService.getOwnerBookings(BookingState.CURRENT, 21));
+        Assertions.assertThrows(RuntimeException.class, () -> bookingService.getOwnerBookings(BookingState.REJECTED, 21));
     }
 }

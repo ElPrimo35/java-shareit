@@ -18,6 +18,8 @@ insert into users(name, email) values ('Test16', 'Test16@Test')
 insert into users(name, email) values ('Test17', 'Test17@Test')
 insert into users(name, email) values ('Test18', 'Test18@Test')
 insert into users(name, email) values ('Test19', 'Test19@Test')
+insert into users(name, email) values ('Test20', 'Test20@Test')
+insert into users(name, email) values ('Test21', 'Test21@Test')
 
 
 
@@ -32,6 +34,7 @@ insert into items(name, description, is_available, owner_id, request_id) values 
 insert into items(name, description, is_available, owner_id, request_id) values ('Test4', 'Test4', true, 5, null)
 insert into items(name, description, is_available, owner_id, request_id) values ('Test5', 'Test5', true, 6, null)
 insert into items(name, description, is_available, owner_id, request_id) values ('Test6', 'Test6', false, 6, null)
+insert into items(name, description, is_available, owner_id, request_id) values ('Test8', 'Test8', true, 21, null)
 
 
 insert into bookings(start_date, end_date, item_id, booker_id, status) values ('2022-12-12', '2023-12-12', 3, 5, 'APPROVED')
