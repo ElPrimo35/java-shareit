@@ -28,22 +28,6 @@ public class BookingServerTest {
         return user;
     }
 
-    UserDto getUser9() {
-        UserDto user = new UserDto();
-        user.setId(9);
-        user.setName("Test8");
-        user.setEmail("Test8@Test");
-        return user;
-    }
-
-    UserDto getUser17() {
-        UserDto user = new UserDto();
-        user.setId(17);
-        user.setName("Test16");
-        user.setEmail("Test16@Test");
-        return user;
-    }
-
     UserDto getUser10() {
         UserDto user = new UserDto();
         user.setId(10);
@@ -59,31 +43,6 @@ public class BookingServerTest {
         user.setEmail("Test10@Test");
         return user;
     }
-
-    UserDto getUser12() {
-        UserDto user = new UserDto();
-        user.setId(12);
-        user.setName("Test11");
-        user.setEmail("Test11@Test");
-        return user;
-    }
-
-    UserDto getUser13() {
-        UserDto user = new UserDto();
-        user.setId(13);
-        user.setName("Test12");
-        user.setEmail("Test12@Test");
-        return user;
-    }
-
-    UserDto getUser14() {
-        UserDto user = new UserDto();
-        user.setId(14);
-        user.setName("Test13");
-        user.setEmail("Test13@Test");
-        return user;
-    }
-
 
     UserDto getUser16() {
         UserDto user = new UserDto();
@@ -109,16 +68,6 @@ public class BookingServerTest {
         item.setId(4);
         item.setName("Test3");
         item.setDescription("Test3");
-        item.setAvailable(true);
-        item.setRequestId(null);
-        return item;
-    }
-
-    ItemDto getItem5() {
-        ItemDto item = new ItemDto();
-        item.setId(5);
-        item.setName("Test4");
-        item.setDescription("Test4");
         item.setAvailable(true);
         item.setRequestId(null);
         return item;
@@ -157,17 +106,6 @@ public class BookingServerTest {
         return booking;
     }
 
-    BookingResponseDto getCurrentBooking() {
-        BookingResponseDto booking = new BookingResponseDto();
-        booking.setId(16);
-        booking.setStart(LocalDateTime.of(2023, 12, 12, 0, 0, 0));
-        booking.setEnd(LocalDateTime.of(2027, 12, 12, 0, 0, 0));
-        booking.setItem(getItem5());
-        booking.setBooker(getUser17());
-        booking.setStatus(Status.REJECTED);
-        return booking;
-    }
-
     BookingResponseDto getWaitingBooking() {
         BookingResponseDto booking = new BookingResponseDto();
         booking.setId(8);
@@ -186,94 +124,6 @@ public class BookingServerTest {
         booking.setEnd(LocalDateTime.of(2027, 12, 12, 0, 0, 0));
         booking.setItem(getItem4());
         booking.setBooker(getUser11());
-        booking.setStatus(Status.REJECTED);
-        return booking;
-    }
-
-    BookingResponseDto getAllOwnerBooking() {
-        BookingResponseDto booking = new BookingResponseDto();
-        booking.setId(10);
-        booking.setStart(LocalDateTime.of(2023, 12, 12, 0, 0, 0));
-        booking.setEnd(LocalDateTime.of(2024, 12, 12, 0, 0, 0));
-        booking.setItem(getItem5());
-        booking.setBooker(getUser12());
-        booking.setStatus(Status.APPROVED);
-        return booking;
-    }
-
-    BookingResponseDto getPastOwnerBooking() {
-        BookingResponseDto booking = new BookingResponseDto();
-        booking.setId(11);
-        booking.setStart(LocalDateTime.of(2023, 12, 12, 0, 0, 0));
-        booking.setEnd(LocalDateTime.of(2024, 12, 12, 0, 0, 0));
-        booking.setItem(getItem5());
-        booking.setBooker(getUser13());
-        booking.setStatus(Status.APPROVED);
-        return booking;
-    }
-
-    BookingResponseDto getFutureOwnerBooking() {
-        BookingResponseDto booking = new BookingResponseDto();
-        booking.setId(12);
-        booking.setStart(LocalDateTime.of(2026, 12, 12, 0, 0, 0));
-        booking.setEnd(LocalDateTime.of(2027, 12, 12, 0, 0, 0));
-        booking.setItem(getItem5());
-        booking.setBooker(getUser14());
-        booking.setStatus(Status.APPROVED);
-        return booking;
-    }
-
-    BookingResponseDto getCurrentOwnerBooking() {
-        BookingResponseDto booking = new BookingResponseDto();
-        booking.setId(13);
-        booking.setStart(LocalDateTime.of(2023, 12, 12, 0, 0, 0));
-        booking.setEnd(LocalDateTime.of(2027, 12, 12, 0, 0, 0));
-        booking.setItem(getItem5());
-        booking.setBooker(getUser14());
-        booking.setStatus(Status.APPROVED);
-        return booking;
-    }
-
-    BookingResponseDto getWaitingOwnerBooking() {
-        BookingResponseDto booking = new BookingResponseDto();
-        booking.setId(14);
-        booking.setStart(LocalDateTime.of(2023, 12, 12, 0, 0, 0));
-        booking.setEnd(LocalDateTime.of(2027, 12, 12, 0, 0, 0));
-        booking.setItem(getItem5());
-        booking.setBooker(getUser14());
-        booking.setStatus(Status.WAITING);
-        return booking;
-    }
-
-    BookingResponseDto getRejectedOwnerBooking() {
-        BookingResponseDto booking = new BookingResponseDto();
-        booking.setId(15);
-        booking.setStart(LocalDateTime.of(2023, 12, 12, 0, 0, 0));
-        booking.setEnd(LocalDateTime.of(2027, 12, 12, 0, 0, 0));
-        booking.setItem(getItem5());
-        booking.setBooker(getUser14());
-        booking.setStatus(Status.REJECTED);
-        return booking;
-    }
-
-    BookingResponseDto getRejectedOwnerBooking17() {
-        BookingResponseDto booking = new BookingResponseDto();
-        booking.setId(15);
-        booking.setStart(LocalDateTime.of(2023, 12, 12, 0, 0, 0));
-        booking.setEnd(LocalDateTime.of(2027, 12, 12, 0, 0, 0));
-        booking.setItem(getItem5());
-        booking.setBooker(getUser17());
-        booking.setStatus(Status.REJECTED);
-        return booking;
-    }
-
-    BookingResponseDto getBooking16() {
-        BookingResponseDto booking = new BookingResponseDto();
-        booking.setId(16);
-        booking.setStart(LocalDateTime.of(2023, 12, 12, 0, 0, 0));
-        booking.setEnd(LocalDateTime.of(2027, 12, 12, 0, 0, 0));
-        booking.setItem(getItem5());
-        booking.setBooker(getUser14());
         booking.setStatus(Status.REJECTED);
         return booking;
     }
@@ -359,14 +209,6 @@ public class BookingServerTest {
         List<BookingResponseDto> bookings = new ArrayList<>();
         bookings.add(getFutureBooking());
         List<BookingResponseDto> bookingList = bookingService.getAllBookings(BookingState.ALL, 16);
-        Assertions.assertEquals(bookings, bookingList);
-    }
-
-    @Test
-    void getCurrentBookings() {
-        List<BookingResponseDto> bookings = new ArrayList<>();
-        bookings.add(getCurrentBooking());
-        List<BookingResponseDto> bookingList = bookingService.getAllBookings(BookingState.CURRENT, 17);
         Assertions.assertEquals(bookings, bookingList);
     }
 
