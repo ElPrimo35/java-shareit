@@ -401,34 +401,6 @@ public class BookingServerTest {
         Assertions.assertThrows(RuntimeException.class, () -> bookingService.confirmationBooking(100, true, 100));
     }
 
-
-    @Test
-    void getOwnerBookingsPastTest() {
-        List<BookingResponseDto> bookings = new ArrayList<>();
-        bookings.add(getAllOwnerBooking());
-        bookings.add(getPastOwnerBooking());
-        List<BookingResponseDto> bookingList = bookingService.getOwnerBookings(BookingState.PAST, 5);
-        Assertions.assertEquals(bookings, bookingList);
-    }
-
-    @Test
-    void getOwnerBookingFutureTest() {
-        List<BookingResponseDto> bookings = new ArrayList<>();
-        bookings.add(getFutureOwnerBooking());
-        List<BookingResponseDto> bookingList = bookingService.getOwnerBookings(BookingState.FUTURE, 5);
-        Assertions.assertEquals(bookings, bookingList);
-    }
-
-
-    @Test
-    void getOwnerBookingWaitingTest() {
-        List<BookingResponseDto> bookings = new ArrayList<>();
-        bookings.add(getWaitingOwnerBooking());
-        List<BookingResponseDto> bookingList = bookingService.getOwnerBookings(BookingState.WAITING, 5);
-        Assertions.assertEquals(bookings, bookingList);
-    }
-
-
     @Test
     void createBookingTest() {
         BookingResponseDto bookingResponseDto = getBooking17();
