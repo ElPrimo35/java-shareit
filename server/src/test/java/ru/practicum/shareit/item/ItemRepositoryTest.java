@@ -65,12 +65,28 @@ public class ItemRepositoryTest {
         return item;
     }
 
+    void itemComparator(Item item, Item item1) {
+        Assertions.assertEquals(item.getName(), item1.getName());
+        Assertions.assertEquals(item.getDescription(), item1.getDescription());
+        Assertions.assertEquals(item.getAvailable(), item1.getAvailable());
+        Assertions.assertEquals(item.getOwner().getId(), item1.getOwner().getId());
+        Assertions.assertEquals(item.getRequest() == null ? null : item.getRequest().getId(),
+                item1.getRequest() == null ? null : item1.getRequest().getId());
+    }
+
+    void itemListComparator(List<Item> itemList, List<Item> itemList1) {
+        Assertions.assertEquals(itemList.size(), itemList1.size());
+        for (int i = 0; i < itemList.size(); i++) {
+            itemComparator(itemList.get(i), itemList1.get(i));
+        }
+    }
+
     @Test
     void findTest() {
         List<Item> itemList = new ArrayList<>();
         itemList.add(getItem());
         List<Item> items = itemRepository.find("t2");
-        Assertions.assertEquals(itemList, items);
+        itemListComparator(itemList, items);
     }
 
 
@@ -79,7 +95,7 @@ public class ItemRepositoryTest {
         List<Item> itemList = new ArrayList<>();
         itemList.add(getItem());
         List<Item> items = itemRepository.findByUserId(3);
-        Assertions.assertEquals(itemList, items);
+        itemListComparator(itemList, items);
     }
 
     @Test
@@ -87,6 +103,6 @@ public class ItemRepositoryTest {
         List<Item> itemList = new ArrayList<>();
         itemList.add(getItem1());
         List<Item> items = itemRepository.findByRequestId(1);
-        Assertions.assertEquals(itemList, items);
+        itemListComparator(itemList, items);
     }
 }

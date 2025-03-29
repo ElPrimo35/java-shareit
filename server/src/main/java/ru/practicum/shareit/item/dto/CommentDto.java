@@ -1,16 +1,10 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Data
 public class CommentDto {
     private Integer id;
     private String text;

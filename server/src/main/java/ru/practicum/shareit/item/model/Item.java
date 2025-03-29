@@ -1,10 +1,8 @@
 package ru.practicum.shareit.item.model;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
@@ -12,8 +10,6 @@ import ru.practicum.shareit.user.User;
 @Setter
 @Entity
 @Table(name = "items")
-@ToString
-@EqualsAndHashCode
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

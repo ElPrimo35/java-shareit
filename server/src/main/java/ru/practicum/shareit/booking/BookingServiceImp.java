@@ -71,9 +71,6 @@ public class BookingServiceImp implements BookingService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
         List<BookingResponseDto> bookingDtos = null;
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
-        if (state == null) {
-            state = BookingState.ALL;
-        }
         switch (state) {
             case ALL -> {
                 bookingDtos = bookingRepository.findBookingsByBooker_Id(userId, newestFirst)
@@ -108,9 +105,6 @@ public class BookingServiceImp implements BookingService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
         List<BookingResponseDto> bookingDtos = null;
-        if (state == null) {
-            state = BookingState.ALL;
-        }
         switch (state) {
             case ALL -> {
                 bookingDtos = bookingRepository.findByItem_Owner_Id(userId, newestFirst)

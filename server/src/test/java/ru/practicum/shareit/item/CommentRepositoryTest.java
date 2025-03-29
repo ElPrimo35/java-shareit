@@ -57,11 +57,25 @@ public class CommentRepositoryTest {
         return comment;
     }
 
+    void commentComparator(Comment comment, Comment comment1) {
+        Assertions.assertEquals(comment.getText(), comment1.getText());
+        Assertions.assertEquals(comment.getItem().getId(), comment1.getItem().getId());
+        Assertions.assertEquals(comment.getAuthor().getId(), comment1.getAuthor().getId());
+        Assertions.assertEquals(comment.getCreated(), comment1.getCreated());
+    }
+
+    void commentListComparator(List<Comment> commentList, List<Comment> commentList1) {
+        Assertions.assertEquals(commentList.size(), commentList1.size());
+        for (int i = 0; i < commentList.size(); i++) {
+            commentComparator(commentList.get(i), commentList1.get(i));
+        }
+    }
+
     @Test
     void findAllByItem_Id() {
         List<Comment> comments = new ArrayList<>();
         comments.add(getComment());
         List<Comment> commentList = commentRepository.findAllByItem_Id(1);
-        Assertions.assertEquals(commentList, comments);
+        commentListComparator(comments, commentList);
     }
 }

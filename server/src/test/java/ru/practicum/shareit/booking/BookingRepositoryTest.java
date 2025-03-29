@@ -58,13 +58,28 @@ public class BookingRepositoryTest {
         return booking;
     }
 
+    void bookingComparator(Booking booking, Booking booking1) {
+        Assertions.assertEquals(booking.getEnd(), booking1.getEnd());
+        Assertions.assertEquals(booking.getStart(), booking1.getStart());
+        Assertions.assertEquals(booking.getItem().getId(), booking1.getItem().getId());
+        Assertions.assertEquals(booking.getBooker().getId(), booking1.getBooker().getId());
+        Assertions.assertEquals(booking.getStatus(), booking1.getStatus());
+    }
+
+    void bookingListComparator(List<Booking> bookingList, List<Booking> bookingList1) {
+        Assertions.assertEquals(bookingList.size(), bookingList1.size());
+        for (int i = 0; i < bookingList.size(); i++) {
+            bookingComparator(bookingList.get(i), bookingList1.get(i));
+        }
+    }
+
     @Test
     void findBookingsByBooker_IdTest() {
         List<Booking> bookingList = new ArrayList<>();
         bookingList.add(getBooking());
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
         List<Booking> bookings = bookingRepository.findBookingsByBooker_Id(5, newestFirst);
-        Assertions.assertEquals(bookingList.toString(), bookings.toString());
+        bookingListComparator(bookingList, bookings);
     }
 
     @Test
@@ -73,13 +88,13 @@ public class BookingRepositoryTest {
         bookingList.add(getBooking());
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
         List<Booking> bookings = bookingRepository.findBookingsByItem_Id(3, newestFirst);
-        Assertions.assertEquals(bookingList.toString(), bookings.toString());
+        bookingListComparator(bookingList, bookings);
     }
 
     @Test
     void findBookingByIdAndOwnerIdTest() {
         Booking booking = bookingRepository.findBookingByIdAndOwnerId(1, 3).get();
-        Assertions.assertEquals(booking.toString(), getBooking().toString());
+        bookingComparator(booking, getBooking());
     }
 
     @Test
@@ -88,7 +103,7 @@ public class BookingRepositoryTest {
         bookings.add(getBooking());
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
         List<Booking> bookingList = bookingRepository.findByItem_Owner_Id(3, newestFirst);
-        Assertions.assertEquals(bookings.toString(), bookingList.toString());
+        bookingListComparator(bookingList, bookings);
     }
 
     @Test
@@ -97,7 +112,7 @@ public class BookingRepositoryTest {
         bookings.add(getBooking());
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
         List<Booking> bookingList = bookingRepository.findByItem_Owner_IdAndEndIsBefore(3, LocalDateTime.of(2026, 12, 12, 0, 0, 0), newestFirst);
-        Assertions.assertEquals(bookings.toString(), bookingList.toString());
+        bookingListComparator(bookingList, bookings);
     }
 
 
@@ -107,7 +122,7 @@ public class BookingRepositoryTest {
         bookings.add(getBooking());
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
         List<Booking> bookingList = bookingRepository.findByItem_Owner_IdAndStartIsAfter(3, LocalDateTime.of(2021, 12, 12, 0, 0, 0), newestFirst);
-        Assertions.assertEquals(bookings.toString(), bookingList.toString());
+        bookingListComparator(bookingList, bookings);
     }
 
     @Test
@@ -116,7 +131,7 @@ public class BookingRepositoryTest {
         bookings.add(getBooking());
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
         List<Booking> bookingList = bookingRepository.findByBooker_IdAndEndIsBefore(5, LocalDateTime.of(2026, 12, 12, 0, 0, 0), newestFirst);
-        Assertions.assertEquals(bookings.toString(), bookingList.toString());
+        bookingListComparator(bookingList, bookings);
     }
 
     @Test
@@ -125,7 +140,7 @@ public class BookingRepositoryTest {
         bookings.add(getBooking());
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
         List<Booking> bookingList = bookingRepository.findByBooker_IdAndStartIsAfter(5, LocalDateTime.of(2021, 12, 12, 0, 0, 0), newestFirst);
-        Assertions.assertEquals(bookings.toString(), bookingList.toString());
+        bookingListComparator(bookingList, bookings);
     }
 
     @Test
@@ -134,7 +149,7 @@ public class BookingRepositoryTest {
         bookings.add(getBooking());
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
         List<Booking> bookingList = bookingRepository.findByItemOwnerIdAndStartBeforeAndEndAfter(3, LocalDateTime.of(2022, 12, 14, 0, 0, 0), newestFirst);
-        Assertions.assertEquals(bookings.toString(), bookingList.toString());
+        bookingListComparator(bookingList, bookings);
     }
 
     @Test
@@ -143,7 +158,7 @@ public class BookingRepositoryTest {
         bookings.add(getBooking());
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
         List<Booking> bookingList = bookingRepository.findByBookerIdAndStartBeforeAndEndAfter(5, LocalDateTime.of(2022, 12, 14, 0, 0, 0), newestFirst);
-        Assertions.assertEquals(bookings.toString(), bookingList.toString());
+        bookingListComparator(bookingList, bookings);
     }
 
     @Test
@@ -152,7 +167,7 @@ public class BookingRepositoryTest {
         bookings.add(getBooking());
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
         List<Booking> bookingList = bookingRepository.findByItem_Owner_IdAndStatus(3, Status.APPROVED, newestFirst);
-        Assertions.assertEquals(bookings.toString(), bookingList.toString());
+        bookingListComparator(bookingList, bookings);
     }
 
     @Test
@@ -161,6 +176,6 @@ public class BookingRepositoryTest {
         bookings.add(getBooking());
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "start");
         List<Booking> bookingList = bookingRepository.findByBooker_IdAndStatus(5, Status.APPROVED, newestFirst);
-        Assertions.assertEquals(bookings.toString(), bookingList.toString());
+        bookingListComparator(bookingList, bookings);
     }
 }

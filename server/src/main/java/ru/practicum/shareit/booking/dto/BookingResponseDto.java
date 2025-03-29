@@ -1,19 +1,13 @@
 package ru.practicum.shareit.booking.dto;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Data
 public class BookingResponseDto {
     private Integer id;
     private LocalDateTime start;

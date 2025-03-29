@@ -1,14 +1,8 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Data
 public class UserDto {
     private Integer id;
     private String name;

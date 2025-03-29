@@ -43,13 +43,26 @@ public class ItemRequestRepositoryTest {
         return itemRequest;
     }
 
+    void itemRequestComparator(ItemRequest itemRequest, ItemRequest itemRequest1) {
+        Assertions.assertEquals(itemRequest.getDescription(), itemRequest1.getDescription());
+        Assertions.assertEquals(itemRequest.getRequestor().getId(), itemRequest1.getRequestor().getId());
+        Assertions.assertEquals(itemRequest.getCreated(), itemRequest1.getCreated());
+    }
+
+    void itemRequestComparator(List<ItemRequest> itemRequests, List<ItemRequest> itemRequests1) {
+        Assertions.assertEquals(itemRequests.size(), itemRequests1.size());
+        for (int i = 0; i < itemRequests.size(); i++) {
+            itemRequestComparator(itemRequests.get(i), itemRequests1.get(i));
+        }
+    }
+
     @Test
     void findByRequestor_Id() {
         List<ItemRequest> itemRequestList = new ArrayList<>();
         itemRequestList.add(getRequest());
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "created");
         List<ItemRequest> itemRequests = requestRepository.findByRequestor_Id(1, newestFirst);
-        Assertions.assertEquals(itemRequestList, itemRequests);
+        itemRequestComparator(itemRequestList, itemRequests);
     }
 
     @Test
@@ -58,6 +71,6 @@ public class ItemRequestRepositoryTest {
         itemRequestList.add(getRequest());
         Sort newestFirst = Sort.by(Sort.Direction.DESC, "created");
         List<ItemRequest> itemRequests = requestRepository.findAllExceptUser(getUser2().getId(), newestFirst);
-        Assertions.assertEquals(itemRequestList, itemRequests);
+        itemRequestComparator(itemRequestList, itemRequests);
     }
 }

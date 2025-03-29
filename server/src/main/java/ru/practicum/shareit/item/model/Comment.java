@@ -1,10 +1,8 @@
 package ru.practicum.shareit.item.model;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
@@ -13,8 +11,6 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "comments")
-@ToString
-@EqualsAndHashCode
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

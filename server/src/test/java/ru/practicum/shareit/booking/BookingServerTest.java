@@ -282,7 +282,6 @@ public class BookingServerTest {
 
 
         Assertions.assertEquals(List.of(bookingResponseDto), bookingService.getOwnerBookings(BookingState.WAITING, 21));
-        Assertions.assertEquals(List.of(bookingResponseDto), bookingService.getOwnerBookings(null, 21));
         Assertions.assertEquals(List.of(bookingResponseDto), bookingService.getOwnerBookings(BookingState.FUTURE, 21));
         Assertions.assertThrows(RuntimeException.class, () -> bookingService.getOwnerBookings(BookingState.PAST, 21));
         Assertions.assertThrows(RuntimeException.class, () -> bookingService.getOwnerBookings(BookingState.CURRENT, 21));

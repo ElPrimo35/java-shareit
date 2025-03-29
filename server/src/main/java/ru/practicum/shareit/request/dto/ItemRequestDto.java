@@ -1,18 +1,12 @@
 package ru.practicum.shareit.request.dto;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import ru.practicum.shareit.item.dto.RequestDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Data
 public class ItemRequestDto {
     private Integer id;
     private String description;
